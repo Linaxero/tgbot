@@ -1,7 +1,7 @@
 import telebot
 import datetime
 import sqlite3
-
+import re
 
 class DataBase:
     def __init__(self, db_name):
@@ -33,6 +33,8 @@ class DataBase:
             )                  
         ''')
         self.close(sql["cursor"], sql["connect"])
+
+        return id_message
 
     def connect_db(self):
         with sqlite3.connect(self.db_name) as connect:
@@ -77,9 +79,10 @@ class DataBase:
         ))
         sql['connect'].commit()
         self.close(sql['cursor'], sql['connect'])
-    def insert_message(self, message: dict)
+    def insert_message(self, message: dict):
         sql = self.connect_db()
         date = datetime.datetime
+        
     def close(self, cursor, connect):
         cursor.close()
         connect.close()
@@ -91,6 +94,7 @@ class TelegramBot(DataBase):
         super().__init__(db_name)
         self.bot = telebot.TeleBot(token)
         self.router()
+        self.admin_chat_id = -1009175397
 
     def router(self):
 
@@ -112,14 +116,27 @@ class TelegramBot(DataBase):
 
         @self.bot.message_handler(func=lambda message: True)
         def echo_all(message):
-            self.bot.reply_to(
+            if message.chat.id != self.admin_chat_id:
+                self.insert_message(message)
+                self.bot.reply_to(
                 message,
                 "Сообщение отправлено админу!"
             )
-            self.bot.delete_message(
-                chat_id=message.chat.id,
-                message_id=message.message_id
-            )
+            text = f'''
+Номер заявки №{id_message}
+ID пользователя: {message.from_user.id}
+Сообщение: {message.text}
+
+            '''
+
+            self.bot.send_message(self.admin_chat_id, "Новая заявка")
+        
+        elif message.chat.id == self.admin_chat_id and message.reply_to_message != None:
+            reply_message = message.reply_to_message.text
+            id_application = re.search(r'Номер заявки №(\d+)', reply_message).group(1)
+            print(id_application)
+            
+        
         self.bot.polling()
 
 
