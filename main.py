@@ -134,7 +134,16 @@ ID пользователя: {message.from_user.id}
         elif message.chat.id == self.admin_chat_id and message.reply_to_message != None:
             reply_message = message.reply_to_message.text
             id_application = re.search(r'Номер заявки №(\d+)', reply_message).group(1)
-            print(id_application)
+            id_user = re.search(r'ID пользователя:(\d+)', reply_message).group(1)
+            message_text = reply_message.split("\n")[2].split(': ')[-1]
+        
+            current_text = message_text
+        
+            self.bot.send_message(
+                id_user,
+                f'Ответ от админа: {current_text}'
+                reply_to_message_id=
+            )
             
         
         self.bot.polling()
