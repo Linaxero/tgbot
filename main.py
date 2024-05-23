@@ -35,6 +35,9 @@ class DataBase:
         self.close(sql["cursor"], sql["connect"])
 
         return id_message
+    
+    def check_message
+        pass
 
     def connect_db(self):
         with sqlite3.connect(self.db_name) as connect:
@@ -132,10 +135,10 @@ ID пользователя: {message.from_user.id}
             self.bot.send_message(self.admin_chat_id, "Новая заявка")
         
         elif message.chat.id == self.admin_chat_id and message.reply_to_message != None:
-            reply_message = message.reply_to_message.text
+                reply_message = message.reply_to_message.text
             id_application = re.search(r'Номер заявки №(\d+)', reply_message).group(1)
             id_user = re.search(r'ID пользователя:(\d+)', reply_message).group(1)
-            message_text = reply_message.split("\n")[2].split(': ')[-1]
+                message_text = reply_message.split("\n")[2].split(': ')[-1]
         
             current_text = message_text
         
